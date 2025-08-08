@@ -1,0 +1,82 @@
+import React, { useState } from "react";
+import { User } from "@/entities/User";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Shield, Lock } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+export default function AdminLogin({ onLogin }) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError("");
+    
+    try {
+      await User.login();
+      // After successful login, check if user is admin
+      const user = await User.me();
+      if (user.role === 'admin') {
+        onLogin(user);
+      } else {
+        setError("Access denied. Admin privileges required.");
+        await User.logout();
+      }
+    } catch (error) {
+      setError("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-charcoal to-gray-800 flex items-center justify-center p-6">
+      <Card className="w-full max-w-md border-0 shadow-2xl">
+        <CardHeader className="text-center pb-8">
+          <div className="w-16 h-16 bg-gold rounded-full flex items-center justify-center mx-auto mb-4">
+            <Shield className="w-8 h-8 text-charcoal" />
+          </div>
+          <CardTitle className="text-2xl font-bold text-charcoal">
+            Admin Dashboard
+          </CardTitle>
+          <p className="text-gray-600">
+            Sign in to access the admin panel
+          </p>
+        </CardHeader>
+        
+        <CardContent className="space-y-6">
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          
+          <Button
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="w-full bg-charcoal hover:bg-gold text-white hover:text-charcoal py-3 text-lg font-semibold"
+          >
+            {loading ? (
+              <>
+                <div className="animate-spin w-5 h-5 rounded-full border-2 border-white border-t-transparent mr-2" />
+                Signing In...
+              </>
+            ) : (
+              <>
+                <Lock className="w-5 h-5 mr-2" />
+                Sign In with Google
+              </>
+            )}
+          </Button>
+          
+          <div className="text-center text-sm text-gray-500">
+            <p>Only authorized administrators can access this panel.</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
