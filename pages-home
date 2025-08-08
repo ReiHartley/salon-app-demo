@@ -1,0 +1,180 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { Scissors, Star, Clock, Users, ArrowRight, Shield } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+export default function Home() {
+  const features = [
+    {
+      icon: Scissors,
+      title: "Master Craftsmen",
+      description: "Our experienced barbers bring years of expertise to every cut"
+    },
+    {
+      icon: Clock,
+      title: "On-Time Service", 
+      description: "Respect your time with punctual, efficient appointments"
+    },
+    {
+      icon: Shield,
+      title: "Premium Quality",
+      description: "Using only the finest tools and products for exceptional results"
+    },
+    {
+      icon: Users,
+      title: "All Welcome",
+      description: "Creating a comfortable experience for clients of all backgrounds"
+    }
+  ];
+
+  return (
+    <div>
+      {/* Hero Section */}
+      <section className="relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-charcoal min-h-[calc(100vh-4rem)] lg:min-h-[calc(100vh-8.5rem)]">
+        <div className="absolute inset-0 bg-black/20 z-10"></div>
+        <img 
+          src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Modern barbershop interior"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        
+        <div className="relative z-20 text-center max-w-4xl mx-auto px-8">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+            Sharp Style
+            <span className="block text-gold">Starts Here</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-white font-medium mb-12 leading-relaxed max-w-2xl mx-auto">
+            Experience precision cuts, classic grooming, and exceptional service at Downtown's premier barbershop
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link to={createPageUrl("Booking")}>
+              <Button className="bg-gold hover:bg-yellow-500 text-charcoal px-8 py-4 text-lg font-semibold rounded-lg transform transition-all duration-300 hover:scale-105 shadow-lg">
+                Book Your Cut
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+            <Link to={createPageUrl("Services")}>
+              <Button variant="outline" className="border-2 border-white text-white bg-black/30 backdrop-blur-sm hover:bg-white hover:text-charcoal px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300">
+                View Services
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-charcoal mb-6">
+              Why Choose Precision Cuts?
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              We're not just another barbershop. We're craftsmen dedicated to delivering 
+              an unparalleled grooming experience that leaves you looking and feeling your absolute best.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
+              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 bg-gray-50 hover:bg-white">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-charcoal group-hover:bg-gold rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-300">
+                    <feature.icon className="w-8 h-8 text-white group-hover:text-charcoal" />
+                  </div>
+                  <h3 className="text-xl font-bold text-charcoal mb-4 group-hover:text-gold transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {feature.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonial Preview */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-charcoal mb-6">
+              What Our Clients Say
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Marcus Johnson",
+                rating: 5,
+                review: "Best cut I've had in years. The attention to detail is incredible.",
+                service: "Signature Fade"
+              },
+              {
+                name: "David Chen", 
+                rating: 5,
+                review: "Professional, clean environment. These guys know their craft.",
+                service: "Beard Trim & Style"
+              },
+              {
+                name: "James Wilson",
+                rating: 5,
+                review: "Always consistent quality. My go-to spot for the past 3 years.",
+                service: "Classic Cut"
+              }
+            ].map((testimonial, index) => (
+              <Card key={index} className="bg-white border-0 shadow-md hover:shadow-lg transition-all duration-300">
+                <CardContent className="p-8">
+                  <div className="flex items-center mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 text-gold fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-gray-700 mb-6 italic leading-relaxed">
+                    "{testimonial.review}"
+                  </p>
+                  <div>
+                    <p className="font-semibold text-charcoal">{testimonial.name}</p>
+                    <p className="text-sm text-gray-500">{testimonial.service}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link to={createPageUrl("Testimonials")}>
+              <Button variant="outline" className="border-2 border-charcoal text-charcoal hover:bg-charcoal hover:text-white px-8 py-3 font-semibold">
+                Read More Reviews
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action */}
+      <section className="py-20 bg-charcoal text-white">
+        <div className="max-w-4xl mx-auto text-center px-6">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            Ready for Your Best Cut Yet?
+          </h2>
+          <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+            Join hundreds of satisfied clients who trust Precision Cuts for their grooming needs.
+            Book your appointment today and experience the difference.
+          </p>
+          <Link to={createPageUrl("Booking")}>
+            <Button className="bg-gold hover:bg-yellow-500 text-charcoal px-10 py-4 text-lg font-bold rounded-lg transform transition-all duration-300 hover:scale-105 shadow-lg">
+              Book Your Appointment
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}
