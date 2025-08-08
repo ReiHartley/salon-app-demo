@@ -1,0 +1,34 @@
+{
+  "name": "Testimonial",
+  "type": "object",
+  "properties": {
+    "client_name": {
+      "type": "string",
+      "description": "Client's name"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Rating out of 5"
+    },
+    "review": {
+      "type": "string",
+      "description": "Client's review"
+    },
+    "service_received": {
+      "type": "string",
+      "description": "Service they received"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Featured testimonial"
+    }
+  },
+  "required": [
+    "client_name",
+    "rating",
+    "review"
+  ]
+}
