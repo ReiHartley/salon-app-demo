@@ -1,0 +1,269 @@
+import React, { useState, useEffect } from "react";
+import { Booking } from "@/entities/Booking";
+import { Revenue } from "@/entities/Revenue";
+import { Service } from "@/entities/Service";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
+import { TrendingUp, DollarSign, Calendar, Clock, Users } from "lucide-react";
+
+export default function AnalyticsDashboard() {
+  const [bookings, setBookings] = useState([]);
+  const [revenue, setRevenue] = useState([]);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState("week");
+
+  useEffect(() => {
+    loadAnalyticsData();
+  }, []);
+
+  const loadAnalyticsData = async () => {
+    try {
+      const [bookingData, revenueData, serviceData] = await Promise.all([
+        Booking.list(),
+        Revenue.list(),
+        Service.list()
+      ]);
+      setBookings(bookingData);
+      setRevenue(revenueData);
+      setServices(serviceData);
+    } catch (error) {
+      console.error("Error loading analytics:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getMostBookedServices = () => {
+    const serviceCounts = {};
+    bookings.forEach(booking => {
+      booking.service_names.forEach(serviceName => {
+        serviceCounts[serviceName] = (serviceCounts[serviceName] || 0) + 1;
+      });
+    });
+    return Object.entries(serviceCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+  };
+
+  const getPeakHours = () => {
+    const hourCounts = {};
+    bookings.forEach(booking => {
+      const hour = booking.appointment_time.split(':')[0];
+      hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+    });
+    return Object.entries(hourCounts)
+      .map(([hour, count]) => ({ hour: `${hour}:00`, count }))
+      .sort((a, b) => parseInt(a.hour) - parseInt(b.hour));
+  };
+
+  const getRevenueByPeriod = () => {
+    const today = new Date();
+    const filtered = revenue.filter(r => {
+      const revenueDate = new Date(r.date);
+      const daysDiff = Math.floor((today - revenueDate) / (1000 * 60 * 60 * 24));
+      return timeRange === "week" ? daysDiff <= 7 : 
+             timeRange === "month" ? daysDiff <= 30 : 
+             daysDiff <= 365;
+    });
+    
+    const grouped = {};
+    filtered.forEach(r => {
+      grouped[r.date] = (grouped[r.date] || 0) + r.amount;
+    });
+    
+    return Object.entries(grouped)
+      .map(([date, amount]) => ({ date, amount }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+  };
+
+  const getConversionRate = () => {
+    const totalVisits = bookings.length * 1.5; // Assuming 1.5x visits for estimation
+    const actualBookings = bookings.filter(b => b.status !== 'cancelled').length;
+    return totalVisits > 0 ? ((actualBookings / totalVisits) * 100).toFixed(1) : 0;
+  };
+
+  const COLORS = ['#D4AF37', '#2D2D2D', '#4A4A4A', '#8B7355', '#B8860B'];
+
+  if (loading) {
+    return (
+      <div className="text-center py-8">
+        <div className="animate-spin w-8 h-8 rounded-full border-4 border-charcoal border-t-gold mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading analytics...</p>
+      </div>
+    );
+  }
+
+  const mostBookedServices = getMostBookedServices();
+  const peakHours = getPeakHours();
+  const revenueData = getRevenueByPeriod();
+  const conversionRate = getConversionRate();
+
+  return (
+    <div className="space-y-6">
+      {/* Analytics Header */}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-charcoal">Analytics Dashboard</h2>
+        <Select value={timeRange} onValueChange={setTimeRange}>
+          <SelectTrigger className="w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="week">Last Week</SelectItem>
+            <SelectItem value="month">Last Month</SelectItem>
+            <SelectItem value="year">Last Year</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="border-0 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Conversion Rate</p>
+                <p className="text-2xl font-bold text-charcoal">{conversionRate}%</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-gold" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-0 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Bookings</p>
+                <p className="text-2xl font-bold text-charcoal">{bookings.length}</p>
+              </div>
+              <Calendar className="h-8 w-8 text-gold" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-0 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+                <p className="text-2xl font-bold text-charcoal">
+                  ${revenue.reduce((sum, r) => sum + r.amount, 0)}
+                </p>
+              </div>
+              <DollarSign className="h-8 w-8 text-gold" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-0 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Avg. Booking Value</p>
+                <p className="text-2xl font-bold text-charcoal">
+                  ${revenue.length > 0 ? Math.round(revenue.reduce((sum, r) => sum + r.amount, 0) / revenue.length) : 0}
+                </p>
+              </div>
+              <Users className="h-8 w-8 text-gold" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Grid */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Revenue Chart */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle>Revenue Trend</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={revenueData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="amount" stroke="#D4AF37" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Peak Hours Chart */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle>Peak Hours</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={peakHours}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="hour" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="count" fill="#2D2D2D" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Most Booked Services */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle>Most Booked Services</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={mostBookedServices}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="count"
+                >
+                  {mostBookedServices.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Service Performance */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle>Service Performance</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {mostBookedServices.map((service, index) => (
+                <div key={service.name} className="flex justify-between items-center">
+                  <span className="font-medium">{service.name}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-24 h-2 bg-gray-200 rounded-full">
+                      <div 
+                        className="h-2 bg-gold rounded-full" 
+                        style={{ width: `${(service.count / mostBookedServices[0].count) * 100}%` }}
+                      ></div>
+                    </div>
+                    <span className="text-sm text-gray-600">{service.count}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
