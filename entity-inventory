@@ -1,0 +1,52 @@
+{
+  "name": "Inventory",
+  "type": "object",
+  "properties": {
+    "product_name": {
+      "type": "string",
+      "description": "Name of the product"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "hair_care",
+        "styling",
+        "tools",
+        "cleaning",
+        "retail"
+      ],
+      "description": "Product category"
+    },
+    "current_stock": {
+      "type": "number",
+      "description": "Current stock level"
+    },
+    "minimum_stock": {
+      "type": "number",
+      "description": "Minimum stock threshold"
+    },
+    "cost_per_unit": {
+      "type": "number",
+      "description": "Cost per unit"
+    },
+    "retail_price": {
+      "type": "number",
+      "description": "Retail price if sold to customers"
+    },
+    "supplier": {
+      "type": "string",
+      "description": "Product supplier"
+    },
+    "last_restocked": {
+      "type": "string",
+      "format": "date",
+      "description": "Last restock date"
+    }
+  },
+  "required": [
+    "product_name",
+    "category",
+    "current_stock",
+    "minimum_stock"
+  ]
+}
