@@ -1,0 +1,49 @@
+{
+  "name": "StylistSchedule",
+  "type": "object",
+  "properties": {
+    "stylist_name": {
+      "type": "string",
+      "description": "Name of the stylist/barber"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Schedule date"
+    },
+    "start_time": {
+      "type": "string",
+      "description": "Start time of availability"
+    },
+    "end_time": {
+      "type": "string",
+      "description": "End time of availability"
+    },
+    "is_available": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the stylist is available"
+    },
+    "break_times": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string"
+          },
+          "end": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Break times during the day"
+    }
+  },
+  "required": [
+    "stylist_name",
+    "date",
+    "start_time",
+    "end_time"
+  ]
+}
