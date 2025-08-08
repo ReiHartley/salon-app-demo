@@ -1,0 +1,43 @@
+{
+  "name": "Service",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Service name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Service description"
+    },
+    "price": {
+      "type": "number",
+      "description": "Service price"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Service duration in minutes"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "haircut",
+        "beard",
+        "styling",
+        "package"
+      ],
+      "description": "Service category"
+    },
+    "popular": {
+      "type": "boolean",
+      "default": false,
+      "description": "Is this a popular service"
+    }
+  },
+  "required": [
+    "name",
+    "price",
+    "duration",
+    "category"
+  ]
+}
