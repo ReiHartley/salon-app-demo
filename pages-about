@@ -1,0 +1,228 @@
+import React from "react";
+import { Scissors, Award, Users, Clock } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+
+export default function About() {
+  const stats = [
+    { number: "15+", label: "Years Experience", icon: Clock },
+    { number: "5000+", label: "Happy Clients", icon: Users },
+    { number: "3", label: "Master Barbers", icon: Scissors },
+    { number: "100%", label: "Satisfaction", icon: Award }
+  ];
+
+  const team = [
+    {
+      name: "Marcus Rodriguez",
+      role: "Master Barber & Owner",
+      experience: "15 years",
+      specialty: "Classic cuts & beard styling",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      name: "James Thompson", 
+      role: "Senior Barber",
+      experience: "8 years",
+      specialty: "Modern fades & designs",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    },
+    {
+      name: "Antonio Silva",
+      role: "Barber",
+      experience: "5 years", 
+      specialty: "Traditional shaves & styling",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+    }
+  ];
+
+  return (
+    <div className="bg-white">
+      {/* Hero Section */}
+      <section className="relative py-20 bg-gradient-to-br from-charcoal to-gray-800 text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                Our Story
+              </h1>
+              <p className="text-xl text-white font-medium mb-8 leading-relaxed">
+                Founded in 2009, Precision Cuts began as a vision to bring traditional 
+                barbering craftsmanship to the modern gentleman. What started as a small 
+                neighborhood shop has grown into Downtown's most trusted grooming destination.
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gold rounded-full flex items-center justify-center">
+                  <Scissors className="w-6 h-6 text-charcoal" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gold">Since 2009</p>
+                  <p className="text-gray-300">Crafting Excellence</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <img 
+                src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Precision Cuts interior"
+                className="rounded-2xl shadow-2xl"
+              />
+              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gold rounded-2xl flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-charcoal">15+</p>
+                  <p className="text-sm font-medium text-charcoal">Years</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <Card key={index} className="text-center border-0 bg-white shadow-md hover:shadow-lg transition-all duration-300">
+                <CardContent className="p-8">
+                  <div className="w-16 h-16 bg-charcoal rounded-full flex items-center justify-center mx-auto mb-4">
+                    <stat.icon className="w-8 h-8 text-gold" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-charcoal mb-2">{stat.number}</h3>
+                  <p className="text-gray-600 font-medium">{stat.label}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <img 
+                src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Barber working"
+                className="rounded-2xl shadow-xl"
+              />
+            </div>
+            
+            <div>
+              <h2 className="text-4xl md:text-5xl font-bold text-charcoal mb-8">
+                Our Mission
+              </h2>
+              <div className="space-y-6">
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  At Precision Cuts, we believe that a great haircut is more than just a service—it's 
+                  an art form that boosts confidence and reflects personal style. Our mission is to 
+                  provide every client with exceptional grooming services in a welcoming, professional environment.
+                </p>
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  We combine time-honored barbering traditions with contemporary techniques, using only 
+                  premium products and tools. Whether you're looking for a classic cut, modern fade, 
+                  or traditional shave, we're committed to delivering precision and quality in every service.
+                </p>
+                <div className="bg-gray-50 p-6 rounded-xl">
+                  <h3 className="font-bold text-charcoal mb-3">Our Values</h3>
+                  <ul className="space-y-2 text-gray-700">
+                    <li>• Excellence in every cut and service</li>
+                    <li>• Respect for tradition and innovation</li>
+                    <li>• Creating an inclusive, welcoming space</li>
+                    <li>• Building lasting relationships with our community</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-charcoal mb-6">
+              Meet Our Master Barbers
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Our skilled team brings decades of combined experience, ensuring every client 
+              receives the highest level of craftsmanship and personalized service.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {team.map((member, index) => (
+              <Card key={index} className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+                <div className="aspect-square overflow-hidden">
+                  <img 
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <CardContent className="p-8">
+                  <h3 className="text-2xl font-bold text-charcoal mb-2">{member.name}</h3>
+                  <p className="text-gold font-semibold mb-4">{member.role}</p>
+                  <div className="space-y-2 text-gray-600">
+                    <p><span className="font-medium">Experience:</span> {member.experience}</p>
+                    <p><span className="font-medium">Specialty:</span> {member.specialty}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Shop Interior */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-charcoal mb-6">
+              Our Space
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Step into our modern, comfortable barbershop designed with both style and 
+              functionality in mind. Every detail creates an atmosphere of relaxation and sophistication.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-8">
+              <img 
+                src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Barbershop chairs"
+                className="rounded-2xl shadow-lg w-full"
+              />
+              <img 
+                src="https://images.unsplash.com/photo-1622286346003-c519a644e4ce?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Barbershop tools"
+                className="rounded-2xl shadow-lg w-full"
+              />
+            </div>
+            <div className="space-y-8">
+              <img 
+                src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                alt="Barbershop interior"
+                className="rounded-2xl shadow-lg w-full"
+              />
+              <div className="bg-charcoal text-white p-8 rounded-2xl">
+                <h3 className="text-2xl font-bold mb-4">Visit Us Today</h3>
+                <p className="text-gray-300 mb-6 leading-relaxed">
+                  Experience the Precision Cuts difference. Walk-ins welcome, 
+                  but we recommend booking ahead to guarantee your preferred time slot.
+                </p>
+                <div className="space-y-2 text-gray-300">
+                  <p><span className="text-gold font-medium">Address:</span> 123 Main Street, Downtown</p>
+                  <p><span className="text-gold font-medium">Phone:</span> (555) 123-CUTS</p>
+                  <p><span className="text-gold font-medium">Hours:</span> Mon-Sat 9AM-7PM, Sun 10AM-4PM</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
