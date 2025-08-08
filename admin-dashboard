@@ -1,0 +1,217 @@
+import React, { useState, useEffect } from "react";
+import { User } from "@/entities/User";
+import { Booking } from "@/entities/Booking";
+import { Revenue } from "@/entities/Revenue";
+import AdminLogin from "../components/admin/AdminLogin";
+import DashboardStats from "../components/admin/DashboardStats";
+import AppointmentManagement from "../components/admin/AppointmentManagement";
+import ClientHistory from "../components/admin/ClientHistory";
+import ScheduleManagement from "../components/admin/ScheduleManagement";
+import AnalyticsDashboard from "../components/admin/AnalyticsDashboard";
+import InventoryManagement from "../components/admin/InventoryManagement";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  LayoutDashboard, 
+  Calendar, 
+  Users, 
+  BarChart3, 
+  Package, 
+  Settings, 
+  LogOut,
+  Clock
+} from "lucide-react";
+
+export default function AdminDashboard() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({});
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  useEffect(() => {
+    if (user && user.role === 'admin') {
+      loadDashboardStats();
+    }
+  }, [user]);
+
+  const checkAuthStatus = async () => {
+    try {
+      const currentUser = await User.me();
+      if (currentUser.role === 'admin') {
+        setUser(currentUser);
+      }
+    } catch (error) {
+      console.log("User not authenticated or not admin");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadDashboardStats = async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Get today's bookings
+      const bookings = await Booking.list();
+      const todayBookings = bookings.filter(b => b.appointment_date === today);
+      
+      // Get revenue data
+      const revenue = await Revenue.list();
+      const todayRevenue = revenue
+        .filter(r => r.date === today)
+        .reduce((sum, r) => sum + r.amount, 0);
+      
+      // Get active clients count
+      const users = await User.list();
+      const activeClients = users.filter(u => u.role === 'user').length;
+      
+      setStats({
+        todayAppointments: todayBookings.length,
+        todayRevenue: todayRevenue,
+        activeClients: activeClients
+      });
+    } catch (error) {
+      console.error("Error loading dashboard stats:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await User.logout();
+      setUser(null);
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin w-12 h-12 rounded-full border-4 border-charcoal border-t-gold mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || user.role !== 'admin') {
+    return <AdminLogin onLogin={setUser} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-charcoal">Admin Dashboard</h1>
+            <p className="text-gray-600">Welcome back, {user.full_name}</p>
+          </div>
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </Button>
+        </div>
+      </header>
+
+      <div className="p-6">
+        {/* Dashboard Stats */}
+        <div className="mb-8">
+          <DashboardStats stats={stats} />
+        </div>
+
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-6 bg-white">
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <LayoutDashboard className="w-4 h-4" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="appointments" className="flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              Appointments
+            </TabsTrigger>
+            <TabsTrigger value="clients" className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
+              Clients
+            </TabsTrigger>
+            <TabsTrigger value="schedules" className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Schedules
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" />
+              Analytics
+            </TabsTrigger>
+            <TabsTrigger value="inventory" className="flex items-center gap-2">
+              <Package className="w-4 h-4" />
+              Inventory
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6">
+            <div className="grid lg:grid-cols-2 gap-6">
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle>Recent Activity</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-500">Recent bookings and updates will appear here.</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle>Quick Actions</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <Button className="w-full justify-start bg-charcoal hover:bg-gold text-white hover:text-charcoal">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    View Today's Appointments
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <Users className="w-4 h-4 mr-2" />
+                    Add New Client
+                  </Button>
+                  <Button variant="outline" className="w-full justify-start">
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    Generate Report
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="appointments">
+            <AppointmentManagement />
+          </TabsContent>
+
+          <TabsContent value="clients">
+            <ClientHistory />
+          </TabsContent>
+
+          <TabsContent value="schedules">
+            <ScheduleManagement />
+          </TabsContent>
+
+          <TabsContent value="analytics">
+            <AnalyticsDashboard />
+          </TabsContent>
+
+          <TabsContent value="inventory">
+            <InventoryManagement />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}
