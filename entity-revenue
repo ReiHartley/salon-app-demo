@@ -1,0 +1,49 @@
+{
+  "name": "Revenue",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Revenue date"
+    },
+    "booking_id": {
+      "type": "string",
+      "description": "Related booking ID"
+    },
+    "service_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Services provided"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Revenue amount"
+    },
+    "payment_method": {
+      "type": "string",
+      "enum": [
+        "cash",
+        "card",
+        "digital"
+      ],
+      "description": "Payment method used"
+    },
+    "stylist_name": {
+      "type": "string",
+      "description": "Stylist who provided the service"
+    },
+    "client_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Client's email"
+    }
+  },
+  "required": [
+    "date",
+    "amount",
+    "service_names"
+  ]
+}
