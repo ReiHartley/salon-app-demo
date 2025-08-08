@@ -1,0 +1,373 @@
+import React, { useState } from "react";
+import { ContactMessage } from "@/entities/ContactMessage";
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle, MessageSquare } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+    preferred_contact: "email"
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError("");
+
+    try {
+      await ContactMessage.create(formData);
+      setSuccess(true);
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+        preferred_contact: "email"
+      });
+    } catch (error) {
+      setError("Failed to send message. Please try again.");
+      console.error("Error sending message:", error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const contactInfo = [
+    {
+      icon: Phone,
+      title: "Call Us",
+      details: "(555) 123-CUTS",
+      subtitle: "Mon-Sat 9AM-7PM, Sun 10AM-4PM"
+    },
+    {
+      icon: Mail,
+      title: "Email Us",
+      details: "info@precisioncuts.com",
+      subtitle: "We'll respond within 24 hours"
+    },
+    {
+      icon: MapPin,
+      title: "Visit Us",
+      details: "123 Main Street\nDowntown, ST 12345",
+      subtitle: "Free parking available"
+    },
+    {
+      icon: Clock,
+      title: "Business Hours",
+      details: "Mon-Fri: 9AM-7PM\nSat: 8AM-6PM\nSun: 10AM-4PM",
+      subtitle: "Walk-ins welcome"
+    }
+  ];
+
+  return (
+    <div className="bg-white">
+      {/* Hero Section */}
+      <section className="py-12 bg-gradient-to-br from-charcoal to-gray-800 text-white">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            Get In Touch
+          </h1>
+          
+          <div className="max-w-3xl mx-auto">
+            <p className="text-xl text-white font-medium mb-8 leading-relaxed">
+              Have questions about our services or want to book an appointment? 
+              We'd love to hear from you. Contact us today!
+            </p>
+
+            <p className="text-lg text-gold font-medium tracking-wider">
+              (555) 123-CUTS &nbsp;•&nbsp; info@precisioncuts.com &nbsp;•&nbsp; 123 Main Street
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Info Cards */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-charcoal mb-6">
+              Multiple Ways to Reach Us
+            </h2>
+            <div className="w-20 h-1 bg-gold mx-auto"></div>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {contactInfo.map((info, index) => (
+              <Card key={index} className="text-center border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <CardHeader className="pb-4">
+                  <div className="w-16 h-16 bg-charcoal rounded-full flex items-center justify-center mx-auto mb-4">
+                    <info.icon className="w-8 h-8 text-gold" />
+                  </div>
+                  <CardTitle className="text-xl font-bold text-charcoal">
+                    {info.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-lg font-medium text-charcoal mb-2 whitespace-pre-line">
+                    {info.details}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {info.subtitle}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form and Map */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
+            {/* Contact Form */}
+            <div>
+              <div className="mb-8">
+                <h2 className="text-4xl font-bold text-charcoal mb-4">
+                  Send Us a Message
+                </h2>
+                <p className="text-gray-600 leading-relaxed">
+                  Have a question or want to provide feedback? Fill out the form below 
+                  and we'll get back to you as soon as possible.
+                </p>
+              </div>
+
+              {success && (
+                <Alert className="mb-6 border-green-200 bg-green-50">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-800">
+                    Thank you for your message! We'll get back to you within 24 hours.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {error && (
+                <Alert variant="destructive" className="mb-6">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="name">Full Name *</Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      placeholder="John Doe"
+                      required
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                      placeholder="(555) 123-4567"
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="email">Email Address *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    placeholder="john@example.com"
+                    required
+                    className="mt-2"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="subject">Subject</Label>
+                  <Input
+                    id="subject"
+                    value={formData.subject}
+                    onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                    placeholder="General inquiry, booking question, etc."
+                    className="mt-2"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="preferred_contact">Preferred Contact Method</Label>
+                  <Select 
+                    value={formData.preferred_contact} 
+                    onValueChange={(value) => setFormData({...formData, preferred_contact: value})}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="phone">Phone</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="message">Message *</Label>
+                  <Textarea
+                    id="message"
+                    value={formData.message}
+                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    placeholder="Tell us how we can help you..."
+                    rows={6}
+                    required
+                    className="mt-2"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full bg-charcoal hover:bg-gold text-white hover:text-charcoal py-4 text-lg font-semibold"
+                >
+                  {submitting ? (
+                    <>
+                      <div className="animate-spin w-5 h-5 rounded-full border-2 border-white border-t-transparent mr-2" />
+                      Sending Message...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5 mr-2" />
+                      Send Message
+                    </>
+                  )}
+                </Button>
+              </form>
+            </div>
+
+            {/* Map and Additional Info */}
+            <div className="space-y-8">
+              {/* Map */}
+              <Card className="border-0 shadow-lg overflow-hidden">
+                <div className="aspect-video bg-gray-100 relative">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.1234567890123!2d-74.00597568459394!3d40.71278827933084!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQyJzQ2LjAiTiA3NMKwMDAnMjEuNSJX!5e0!3m2!1sen!2sus!4v1234567890123"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Precision Cuts Location"
+                    className="absolute inset-0"
+                  ></iframe>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold text-charcoal mb-4">Find Us Downtown</h3>
+                  <div className="space-y-2 text-gray-600">
+                    <p className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-gold" />
+                      123 Main Street, Downtown, ST 12345
+                    </p>
+                    <p className="text-sm">
+                      Located in the heart of downtown with easy access to public transport and free parking.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card className="border-0 shadow-lg bg-charcoal text-white">
+                <CardContent className="p-8">
+                  <h3 className="text-2xl font-bold mb-6">Need Immediate Assistance?</h3>
+                  <div className="space-y-4">
+                    <a 
+                      href="tel:+15551234287"
+                      className="flex items-center gap-3 p-4 bg-gold text-charcoal rounded-lg hover:bg-yellow-500 transition-colors font-medium"
+                    >
+                      <Phone className="w-5 h-5" />
+                      Call Now: (555) 123-CUTS
+                    </a>
+                    <a 
+                      href="/booking"
+                      className="flex items-center gap-3 p-4 border-2 border-white text-white rounded-lg hover:bg-white hover:text-charcoal transition-colors font-medium"
+                    >
+                      <MessageSquare className="w-5 h-5" />
+                      Book Online Appointment
+                    </a>
+                  </div>
+                  <p className="text-gray-300 text-sm mt-6">
+                    Our team is standing by to help you with any questions or to schedule your next appointment.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-charcoal mb-6">
+              Frequently Asked Questions
+            </h2>
+            <div className="w-20 h-1 bg-gold mx-auto"></div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              {
+                question: "Do I need an appointment?",
+                answer: "While we welcome walk-ins, we recommend booking an appointment to guarantee your preferred time slot and barber."
+              },
+              {
+                question: "What payment methods do you accept?",
+                answer: "We accept cash, all major credit cards, and mobile payment options like Apple Pay and Google Pay."
+              },
+              {
+                question: "How long does a typical haircut take?",
+                answer: "Most cuts take 30-45 minutes, but our full service packages can take up to 90 minutes for the complete experience."
+              },
+              {
+                question: "Do you offer services for children?",
+                answer: "Yes! We love working with kids and offer special children's cuts in a friendly, patient environment."
+              },
+              {
+                question: "What if I need to cancel my appointment?",
+                answer: "Please call us at least 2 hours before your appointment to cancel or reschedule without any charges."
+              },
+              {
+                question: "Do you sell grooming products?",
+                answer: "Yes, we carry a selection of premium grooming products that our barbers use and recommend."
+              }
+            ].map((faq, index) => (
+              <Card key={index} className="border-0 shadow-md">
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-charcoal mb-3">{faq.question}</h3>
+                  <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
