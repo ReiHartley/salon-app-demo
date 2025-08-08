@@ -1,0 +1,62 @@
+{
+  "name": "Booking",
+  "type": "object",
+  "properties": {
+    "client_name": {
+      "type": "string",
+      "description": "Client's full name"
+    },
+    "client_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Client's email address"
+    },
+    "client_phone": {
+      "type": "string",
+      "description": "Client's phone number"
+    },
+    "service_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Selected services"
+    },
+    "appointment_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Appointment date"
+    },
+    "appointment_time": {
+      "type": "string",
+      "description": "Appointment time"
+    },
+    "barber_preference": {
+      "type": "string",
+      "description": "Preferred barber"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Booking status"
+    }
+  },
+  "required": [
+    "client_name",
+    "client_email",
+    "client_phone",
+    "service_names",
+    "appointment_date",
+    "appointment_time"
+  ]
+}
